@@ -108,6 +108,26 @@ export interface Transaction {
   created_at: string;
 }
 
+export interface PaymentGateway {
+  id: string;
+  provider: string;
+  provider_display: string;
+  display_name: string;
+  masked_api_key: string;
+  masked_api_secret: string;
+  merchant_id: string;
+  environment: string;
+  is_active: boolean;
+  extra_config: Record<string, string>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentProvider {
+  value: string;
+  label: string;
+}
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;

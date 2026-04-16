@@ -7,7 +7,7 @@ import { Button } from "../components/ui/button";
 import { isAuthenticated, getUser } from "../store/auth";
 import {
   Package, ShoppingCart, DollarSign, TrendingUp,
-  BarChart3, AlertTriangle,
+  BarChart3, AlertTriangle, CreditCard,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -197,13 +197,29 @@ export default function Dashboard() {
               </Button>
             </div>
 
+            {/* Payment Gateways - Seller Only */}
+            {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "depot") && (
+              <Button
+                variant="outline"
+                className="h-auto py-4 flex flex-col items-center gap-2"
+                onClick={() => navigate("/payment-gateways")}
+              >
+                <CreditCard className="h-6 w-6 text-orange-600" />
+                <span className="text-xs">Payment Gateways</span>
+              </Button>
+            )}
+
             {/* Role-Specific Info */}
             {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company") && (
               <div className="mt-6 p-4 bg-emerald-50 rounded-lg">
                 <h4 className="font-medium text-emerald-800 mb-2">Business Tools</h4>
                 <p className="text-sm text-emerald-700">
                   As a {roleLabel}, you have access to inventory management, supply chain ordering,
-                  and financial reporting tools.
+                  and financial reporting tools. Configure your{" "}
+                  <button onClick={() => navigate("/payment-gateways")} className="underline font-medium">
+                    payment gateways
+                  </button>{" "}
+                  to accept payments from customers.
                 </p>
               </div>
             )}

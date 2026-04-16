@@ -3,8 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Sum
-from .models import Transaction, CreditAccount, CreditPayment
-from .serializers import TransactionSerializer, CreditAccountSerializer, CreditPaymentSerializer
+from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway
+from .serializers import (
+    TransactionSerializer, CreditAccountSerializer, CreditPaymentSerializer,
+    PaymentGatewaySerializer, PaymentGatewayListSerializer,
+)
+from accounts.permissions import IsSellerRole
 
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -56,3 +60,39 @@ class CreditAccountViewSet(viewsets.ModelViewSet):
             credit.status = "paid"
         credit.save()
         return Response(CreditAccountSerializer(credit).data)
+
+
+class PaymentGatewayViewSet(viewsets.ModelViewSet):
+    """
+    CRUD for payment gateways.
+    Only sellers (retailer, wholesaler, company, depot, admin) can manage gateways.
+    Each user only sees their own gateways.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsSellerRole]
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return PaymentGatewayListSerializer
+        return PaymentGatewaySerializer
+
+    def get_queryset(self):
+        return PaymentGateway.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    @action(detail=True, methods=["post"])
+    def toggle(self, request, pk=None):
+        """Activate or deactivate a payment gateway."""
+        gateway = self.get_object()
+        gateway.is_active = not gateway.is_active
+        gateway.save(update_fields=["is_active", "updated_at"])
+        return Response(PaymentGatewayListSerializer(gateway).data)
+
+    @action(detail=False, methods=["get"])
+    def providers(self, request):
+        """Return the list of supported payment providers."""
+        return Response([
+            {"value": choice[0], "label": choice[1]}
+            for choice in PaymentGateway.Provider.choices
+        ])

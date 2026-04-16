@@ -93,3 +93,19 @@ export const financeAPI = {
 export const marketAPI = {
   prices: () => api.get("/market/prices/"),
 };
+
+// Payment Gateways
+export const paymentGatewayAPI = {
+  list: () => api.get("/finance/payment-gateways/"),
+  get: (id: string) => api.get(`/finance/payment-gateways/${id}/`),
+  create: (data: Record<string, unknown>) =>
+    api.post("/finance/payment-gateways/", data),
+  update: (id: string, data: Record<string, unknown>) =>
+    api.put(`/finance/payment-gateways/${id}/`, data),
+  patch: (id: string, data: Record<string, unknown>) =>
+    api.patch(`/finance/payment-gateways/${id}/`, data),
+  delete: (id: string) => api.delete(`/finance/payment-gateways/${id}/`),
+  toggle: (id: string) =>
+    api.post(`/finance/payment-gateways/${id}/toggle/`),
+  providers: () => api.get("/finance/payment-gateways/providers/"),
+};
