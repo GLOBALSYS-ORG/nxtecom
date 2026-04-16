@@ -44,6 +44,7 @@ export default function CartPage() {
     try {
       const res = await cartAPI.updateItem(itemId, newQuantity);
       setCart(res.data);
+      window.dispatchEvent(new Event("cart-updated"));
     } catch {
       setError("Failed to update quantity.");
     } finally {
@@ -56,6 +57,7 @@ export default function CartPage() {
     try {
       const res = await cartAPI.removeItem(itemId);
       setCart(res.data);
+      window.dispatchEvent(new Event("cart-updated"));
     } catch {
       setError("Failed to remove item.");
     } finally {
@@ -67,6 +69,7 @@ export default function CartPage() {
     try {
       await cartAPI.clear();
       setCart(null);
+      window.dispatchEvent(new Event("cart-updated"));
       loadCart();
     } catch {
       setError("Failed to clear cart.");

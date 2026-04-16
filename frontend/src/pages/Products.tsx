@@ -56,6 +56,7 @@ export default function Products() {
     setAddingToCart(product.id);
     try {
       await cartAPI.addItem(product.id, 1);
+      window.dispatchEvent(new Event("cart-updated"));
       setMessage(`${product.name} added to cart!`);
       setTimeout(() => setMessage(""), 3000);
     } catch {

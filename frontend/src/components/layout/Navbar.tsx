@@ -13,10 +13,17 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchCartCount = () => {
     if (authenticated) {
       cartAPI.get().then((res) => setCartCount(res.data.total_items || 0)).catch(() => {});
     }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+    const handler = () => fetchCartCount();
+    window.addEventListener("cart-updated", handler);
+    return () => window.removeEventListener("cart-updated", handler);
   }, [authenticated]);
 
   const handleLogout = () => {

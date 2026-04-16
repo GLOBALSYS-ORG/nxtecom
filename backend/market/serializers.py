@@ -17,4 +17,4 @@ class PriceAlertSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceAlert
         fields = "__all__"
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "user", "created_at"]

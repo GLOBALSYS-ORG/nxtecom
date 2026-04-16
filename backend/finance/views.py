@@ -50,8 +50,16 @@ class CreditAccountViewSet(viewsets.ModelViewSet):
         if not amount:
             return Response({"error": "Amount is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        amount = float(amount)
-        if amount > float(credit.balance):
+        from decimal import Decimal, InvalidOperation
+        try:
+            amount = Decimal(str(amount))
+        except (InvalidOperation, ValueError):
+            return Response({"error": "Invalid amount."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if amount <= 0:
+            return Response({"error": "Invalid amount."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if amount > credit.balance:
             return Response({"error": "Amount exceeds balance."}, status=status.HTTP_400_BAD_REQUEST)
 
         CreditPayment.objects.create(credit_account=credit, amount=amount)
