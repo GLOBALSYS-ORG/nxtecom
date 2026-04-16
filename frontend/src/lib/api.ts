@@ -87,6 +87,16 @@ export const ordersAPI = {
 export const financeAPI = {
   report: () => api.get("/finance/reports/"),
   transactions: () => api.get("/finance/transactions/"),
+  credits: () => api.get("/finance/credits/"),
+};
+
+// Inventory
+export const inventoryAPI = {
+  list: () => api.get("/products/inventory/"),
+  get: (id: string) => api.get(`/products/inventory/${id}/`),
+  create: (data: Record<string, unknown>) => api.post("/products/inventory/", data),
+  update: (id: string, data: Record<string, unknown>) => api.put(`/products/inventory/${id}/`, data),
+  delete: (id: string) => api.delete(`/products/inventory/${id}/`),
 };
 
 // Market
