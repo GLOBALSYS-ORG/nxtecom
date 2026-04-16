@@ -81,6 +81,15 @@ class PaymentGatewayViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def perform_update(self, serializer):
+        """Skip overwriting secret fields when the client sends blank values."""
+        secret_fields = ("api_key", "api_secret", "webhook_secret")
+        data = serializer.validated_data
+        for field in secret_fields:
+            if field in data and not data[field]:
+                data.pop(field)
+        serializer.save()
+
     @action(detail=True, methods=["post"])
     def toggle(self, request, pk=None):
         """Activate or deactivate a payment gateway."""
