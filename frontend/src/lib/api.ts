@@ -95,7 +95,7 @@ export const inventoryAPI = {
   list: () => api.get("/products/inventory/"),
   get: (id: string) => api.get(`/products/inventory/${id}/`),
   create: (data: Record<string, unknown>) => api.post("/products/inventory/", data),
-  update: (id: string, data: Record<string, unknown>) => api.put(`/products/inventory/${id}/`, data),
+  update: (id: string, data: Record<string, unknown>) => api.patch(`/products/inventory/${id}/`, data),
   delete: (id: string) => api.delete(`/products/inventory/${id}/`),
 };
 
