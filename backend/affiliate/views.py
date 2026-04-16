@@ -48,11 +48,19 @@ class AffiliateWithdrawView(APIView):
             return Response({"error": "Not an affiliate."}, status=status.HTTP_404_NOT_FOUND)
 
         amount = request.data.get("amount")
-        if not amount or float(amount) <= 0:
+        if not amount:
             return Response({"error": "Invalid amount."}, status=status.HTTP_400_BAD_REQUEST)
 
-        amount = float(amount)
-        if amount > float(account.pending_earnings):
+        from decimal import Decimal, InvalidOperation
+        try:
+            amount = Decimal(str(amount))
+        except (InvalidOperation, ValueError):
+            return Response({"error": "Invalid amount."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if amount <= 0:
+            return Response({"error": "Invalid amount."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if amount > account.pending_earnings:
             return Response({"error": "Insufficient balance."}, status=status.HTTP_400_BAD_REQUEST)
 
         withdrawal = AffiliateWithdrawal.objects.create(affiliate=account, amount=amount)
