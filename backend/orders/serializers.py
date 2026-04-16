@@ -32,4 +32,4 @@ class OrderSerializer(serializers.ModelSerializer):
 class CreateOrderSerializer(serializers.Serializer):
     delivery_address = serializers.CharField()
     payment_method = serializers.CharField(default="mobile_money")
-    notes = serializers.CharField(required=False, default="")
+    notes = serializers.CharField(required=False, default="", allow_blank=True)

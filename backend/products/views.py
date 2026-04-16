@@ -25,8 +25,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
     lookup_field = "id"
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["category", "is_active"]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "description", "sku"]
     ordering_fields = ["base_price", "created_at", "name"]
 
@@ -34,6 +33,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "retrieve"):
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsSellerRole()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        category_slug = self.request.query_params.get("category")
+        if category_slug:
+            qs = qs.filter(category__slug=category_slug)
+        return qs
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
