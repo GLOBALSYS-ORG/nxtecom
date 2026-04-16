@@ -7,7 +7,7 @@ import { Button } from "../components/ui/button";
 import { isAuthenticated, getUser } from "../store/auth";
 import {
   Package, ShoppingCart, DollarSign, TrendingUp,
-  BarChart3, AlertTriangle, CreditCard,
+  BarChart3, AlertTriangle, CreditCard, FileText, Warehouse,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -197,15 +197,37 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            {/* Payment Gateways - Seller Only */}
+            {/* Seller-Only Quick Actions */}
             {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "depot") && (
+              <>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/inventory")}
+                >
+                  <Warehouse className="h-6 w-6 text-amber-600" />
+                  <span className="text-xs">Inventory</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/payment-gateways")}
+                >
+                  <CreditCard className="h-6 w-6 text-orange-600" />
+                  <span className="text-xs">Payment Gateways</span>
+                </Button>
+              </>
+            )}
+
+            {/* Financial Statements - Retailer/Wholesaler/Company/Admin */}
+            {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "admin") && (
               <Button
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center gap-2"
-                onClick={() => navigate("/payment-gateways")}
+                onClick={() => navigate("/financial-statements")}
               >
-                <CreditCard className="h-6 w-6 text-orange-600" />
-                <span className="text-xs">Payment Gateways</span>
+                <FileText className="h-6 w-6 text-indigo-600" />
+                <span className="text-xs">Financial Statements</span>
               </Button>
             )}
 

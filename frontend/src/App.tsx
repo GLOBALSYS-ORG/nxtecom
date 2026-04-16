@@ -9,6 +9,8 @@ import CartPage from "./pages/Cart";
 import Orders from "./pages/Orders";
 import Dashboard from "./pages/Dashboard";
 import PaymentGateways from "./pages/PaymentGateways";
+import InventoryPage from "./pages/Inventory";
+import FinancialStatements from "./pages/FinancialStatements";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
             <Route path="/orders" element={<Orders />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/payment-gateways" element={<PaymentGateways />} />
+            <Route path="/inventory" element={<InventoryPage />} />
+            <Route path="/financial-statements" element={<FinancialStatements />} />
           </Routes>
         </main>
         <Footer />
