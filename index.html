@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NxtEcom - Next Generation E-Commerce Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: #333;
+      background-color: #f9fafb;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #1a1a2e;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    header nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    header nav a:hover {
+      color: #fff;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      max-width: 640px;
+      margin: 0 auto 2rem;
+      color: #d1d5db;
+    }
+
+    .hero .cta {
+      display: inline-block;
+      background-color: #e94560;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+    }
+
+    .hero .cta:hover {
+      background-color: #d63851;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 960px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+
+    .feature-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.15rem;
+    }
+
+    .feature-card p {
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      border-top: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">NxtEcom</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="https://github.com/GLOBALSYS-ORG/nxtecom/wiki" target="_blank" rel="noopener noreferrer">Documentation</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Welcome to NxtEcom</h1>
+    <p>
+      NxtEcom is a next-generation e-commerce platform designed to help
+      businesses build fast, scalable, and modern online stores. Get started
+      quickly with our developer-friendly tools and comprehensive documentation.
+    </p>
+    <a class="cta" href="https://github.com/GLOBALSYS-ORG/nxtecom/wiki" target="_blank" rel="noopener noreferrer">
+      Read the Docs
+    </a>
+  </section>
+
+  <section class="features" id="features">
+    <div class="feature-card">
+      <h3>Lightning Fast</h3>
+      <p>
+        Optimized for performance out of the box so your customers enjoy a
+        seamless shopping experience.
+      </p>
+    </div>
+    <div class="feature-card">
+      <h3>Fully Customizable</h3>
+      <p>
+        Extend and theme every aspect of your storefront to match your brand
+        identity.
+      </p>
+    </div>
+    <div class="feature-card">
+      <h3>Developer Friendly</h3>
+      <p>
+        Clean APIs, thorough documentation, and a modular architecture make
+        integration a breeze.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 NxtEcom. All rights reserved.
+  </footer>
+</body>
+</html>
