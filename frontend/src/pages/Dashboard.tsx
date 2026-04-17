@@ -8,6 +8,7 @@ import { isAuthenticated, getUser } from "../store/auth";
 import {
   Package, ShoppingCart, DollarSign, TrendingUp,
   BarChart3, AlertTriangle, CreditCard, FileText, Warehouse,
+  Sprout, Truck, Wallet,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -20,6 +21,10 @@ export default function Dashboard() {
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login");
+      return;
+    }
+    if (user?.role === "farmer") {
+      navigate("/farmer-dashboard");
       return;
     }
     loadDashboard();
@@ -199,7 +204,7 @@ export default function Dashboard() {
 
             {/* Seller-Only Quick Actions */}
             {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "depot") && (
-              <>
+              <div className="grid grid-cols-2 gap-3 mt-3">
                 <Button
                   variant="outline"
                   className="h-auto py-4 flex flex-col items-center gap-2"
@@ -216,14 +221,46 @@ export default function Dashboard() {
                   <CreditCard className="h-6 w-6 text-orange-600" />
                   <span className="text-xs">Payment Gateways</span>
                 </Button>
-              </>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/credit-management")}
+                >
+                  <DollarSign className="h-6 w-6 text-red-600" />
+                  <span className="text-xs">Credit Management</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/logistics")}
+                >
+                  <Truck className="h-6 w-6 text-indigo-600" />
+                  <span className="text-xs">Logistics</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/budget-expenses")}
+                >
+                  <Wallet className="h-6 w-6 text-teal-600" />
+                  <span className="text-xs">Budget & Expenses</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/production")}
+                >
+                  <Sprout className="h-6 w-6 text-green-600" />
+                  <span className="text-xs">Production</span>
+                </Button>
+              </div>
             )}
 
             {/* Financial Statements - Retailer/Wholesaler/Company/Admin */}
             {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "admin") && (
               <Button
                 variant="outline"
-                className="h-auto py-4 flex flex-col items-center gap-2"
+                className="h-auto py-4 flex flex-col items-center gap-2 mt-3 w-full"
                 onClick={() => navigate("/financial-statements")}
               >
                 <FileText className="h-6 w-6 text-indigo-600" />
@@ -237,7 +274,7 @@ export default function Dashboard() {
                 <h4 className="font-medium text-emerald-800 mb-2">Business Tools</h4>
                 <p className="text-sm text-emerald-700">
                   As a {roleLabel}, you have access to inventory management, supply chain ordering,
-                  and financial reporting tools. Configure your{" "}
+                  credit management, logistics tracking, and financial reporting tools. Configure your{" "}
                   <button onClick={() => navigate("/payment-gateways")} className="underline font-medium">
                     payment gateways
                   </button>{" "}

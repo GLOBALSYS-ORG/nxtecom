@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway
+from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
 
 
 @admin.register(Transaction)
@@ -36,3 +36,31 @@ class PaymentGatewayAdmin(admin.ModelAdmin):
     list_filter = ("provider", "environment", "is_active")
     search_fields = ("display_name", "owner__username", "merchant_id")
     readonly_fields = ("masked_api_key", "masked_api_secret")
+
+
+@admin.register(CreditLimit)
+class CreditLimitAdmin(admin.ModelAdmin):
+    list_display = ("creditor", "debtor", "credit_limit", "used_amount", "risk_score", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("creditor__username", "debtor__username")
+
+
+@admin.register(Budget)
+class BudgetAdmin(admin.ModelAdmin):
+    list_display = ("name", "user", "amount", "spent", "period", "start_date", "end_date", "is_active")
+    list_filter = ("period", "is_active")
+    search_fields = ("name", "user__username")
+
+
+@admin.register(Expense)
+class ExpenseAdmin(admin.ModelAdmin):
+    list_display = ("user", "category", "amount", "date", "receipt_reference")
+    list_filter = ("category",)
+    search_fields = ("user__username", "description")
+
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ("invoice_number", "issuer", "recipient", "subtotal", "tax_amount", "total", "status", "due_date")
+    list_filter = ("status",)
+    search_fields = ("invoice_number", "issuer__username", "recipient__username")

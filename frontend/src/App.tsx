@@ -11,6 +11,11 @@ import Dashboard from "./pages/Dashboard";
 import PaymentGateways from "./pages/PaymentGateways";
 import InventoryPage from "./pages/Inventory";
 import FinancialStatements from "./pages/FinancialStatements";
+import FarmerDashboard from "./pages/FarmerDashboard";
+import Production from "./pages/Production";
+import CreditManagement from "./pages/CreditManagement";
+import Logistics from "./pages/Logistics";
+import BudgetExpenses from "./pages/BudgetExpenses";
 
 function App() {
   return (
@@ -29,6 +34,11 @@ function App() {
             <Route path="/payment-gateways" element={<PaymentGateways />} />
             <Route path="/inventory" element={<InventoryPage />} />
             <Route path="/financial-statements" element={<FinancialStatements />} />
+            <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
+            <Route path="/production" element={<Production />} />
+            <Route path="/credit-management" element={<CreditManagement />} />
+            <Route path="/logistics" element={<Logistics />} />
+            <Route path="/budget-expenses" element={<BudgetExpenses />} />
           </Routes>
         </main>
         <Footer />

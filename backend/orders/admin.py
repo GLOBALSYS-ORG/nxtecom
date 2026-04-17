@@ -15,8 +15,8 @@ class OrderTrackingInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("order_number", "buyer", "status", "payment_status", "total", "created_at")
-    list_filter = ("status", "payment_status", "payment_method")
+    list_display = ("order_number", "buyer", "order_type", "status", "approval_status", "payment_status", "is_dropship", "total", "created_at")
+    list_filter = ("status", "payment_status", "order_type", "approval_status", "is_dropship", "is_credit_order")
     search_fields = ("order_number", "buyer__username", "delivery_address")
     ordering = ("-created_at",)
     inlines = [OrderItemInline, OrderTrackingInline]

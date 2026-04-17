@@ -104,6 +104,43 @@ export const marketAPI = {
   prices: () => api.get("/market/prices/"),
 };
 
+// Production
+export const productionAPI = {
+  crops: () => api.get("/production/crops/"),
+  planting: () => api.get("/production/planting/"),
+  createPlanting: (data: Record<string, unknown>) => api.post("/production/planting/", data),
+  harvests: () => api.get("/production/harvests/"),
+  createHarvest: (data: Record<string, unknown>) => api.post("/production/harvests/", data),
+  livestock: () => api.get("/production/livestock/"),
+  createLivestock: (data: Record<string, unknown>) => api.post("/production/livestock/", data),
+  purchaseOffers: () => api.get("/production/purchase-offers/"),
+  acceptOffer: (id: string) => api.post(`/production/purchase-offers/${id}/accept/`),
+  rejectOffer: (id: string) => api.post(`/production/purchase-offers/${id}/reject/`),
+};
+
+// Logistics
+export const logisticsAPI = {
+  shipments: () => api.get("/logistics/shipments/"),
+  getShipment: (id: string) => api.get(`/logistics/shipments/${id}/`),
+  tracking: (id: string) => api.get(`/logistics/shipments/${id}/tracking/`),
+  transporters: () => api.get("/logistics/transporters/"),
+};
+
+// Credit
+export const creditAPI = {
+  limits: () => api.get("/finance/credit-limits/"),
+  createLimit: (data: Record<string, unknown>) => api.post("/finance/credit-limits/", data),
+};
+
+// Budgets & Expenses
+export const budgetAPI = {
+  list: () => api.get("/finance/budgets/"),
+  create: (data: Record<string, unknown>) => api.post("/finance/budgets/", data),
+  expenses: () => api.get("/finance/expenses/"),
+  createExpense: (data: Record<string, unknown>) => api.post("/finance/expenses/", data),
+  invoices: () => api.get("/finance/invoices/"),
+};
+
 // Payment Gateways
 export const paymentGatewayAPI = {
   list: () => api.get("/finance/payment-gateways/"),

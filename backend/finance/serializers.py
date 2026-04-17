@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway
+from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -63,3 +63,43 @@ class PaymentGatewayListSerializer(serializers.ModelSerializer):
             "environment", "is_active", "extra_config",
             "created_at", "updated_at",
         ]
+
+
+class CreditLimitSerializer(serializers.ModelSerializer):
+    creditor_name = serializers.CharField(source="creditor.username", read_only=True)
+    debtor_name = serializers.CharField(source="debtor.username", read_only=True)
+    available_credit = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = CreditLimit
+        fields = "__all__"
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+
+class BudgetSerializer(serializers.ModelSerializer):
+    remaining = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = Budget
+        fields = "__all__"
+        read_only_fields = ["id", "user", "created_at"]
+
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    category_display = serializers.CharField(source="get_category_display", read_only=True)
+
+    class Meta:
+        model = Expense
+        fields = "__all__"
+        read_only_fields = ["id", "user", "created_at"]
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    issuer_name = serializers.CharField(source="issuer.username", read_only=True)
+    recipient_name = serializers.CharField(source="recipient.username", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+
+    class Meta:
+        model = Invoice
+        fields = "__all__"
+        read_only_fields = ["id", "invoice_number", "total", "created_at", "updated_at"]

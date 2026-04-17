@@ -21,6 +21,8 @@ def api_root(request):
             "finance": "/api/finance/",
             "affiliate": "/api/affiliate/",
             "market": "/api/market/",
+            "production": "/api/production/",
+            "logistics": "/api/logistics/",
         },
     })
 
@@ -36,6 +38,8 @@ urlpatterns = [
     path("api/finance/", include("finance.urls")),
     path("api/affiliate/", include("affiliate.urls")),
     path("api/market/", include("market.urls")),
+    path("api/production/", include("production.urls")),
+    path("api/logistics/", include("logistics.urls")),
 ]
 
 if settings.DEBUG:
