@@ -43,7 +43,7 @@ class IsCompanyOrAdmin(BasePermission):
 
 class IsFarmer(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == "farmer"
+        return request.user.is_authenticated and request.user.role in ("farmer", "admin")
 
 
 class IsFarmerOrCompany(BasePermission):

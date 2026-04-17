@@ -36,7 +36,7 @@ export default function FarmerDashboard() {
         productionAPI.harvests().catch(() => ({ data: [] })),
         inventoryAPI.list().catch(() => ({ data: [] })),
       ]);
-      const arr = (d: any) => Array.isArray(d) ? d : d.results || [];
+      const arr = (d: unknown) => { const data = d as Record<string, unknown>; return Array.isArray(data) ? data : (data.results as unknown[]) || []; };
       setPlanting(arr(pRes.data)); setLivestock(arr(lRes.data));
       setOffers(arr(oRes.data)); setHarvests(arr(hRes.data));
       setInventoryCount(arr(iRes.data).length);

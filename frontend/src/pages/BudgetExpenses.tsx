@@ -31,7 +31,7 @@ interface Invoice {
   invoice_number: string;
   issuer_name: string;
   recipient_name: string;
-  total_amount: string;
+  total: string;
   status: string;
   status_display: string;
   due_date: string;
@@ -284,7 +284,7 @@ export default function BudgetExpenses() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">{fmt(i.total_amount)}</p>
+                      <p className="font-bold">{fmt(i.total)}</p>
                       <Badge
                         className={
                           i.status === "paid"

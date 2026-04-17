@@ -23,7 +23,7 @@ interface CreditAccount {
   debtor_name: string;
   amount: string;
   amount_paid: string;
-  outstanding: string;
+  balance: string;
   due_date: string;
   status: string;
   risk_score: number;
@@ -95,7 +95,7 @@ export default function CreditManagement() {
   const totalUsed = limits.reduce((s, l) => s + Number(l.used_amount), 0);
   const totalOutstanding = accounts
     .filter((a) => a.status === "active")
-    .reduce((s, a) => s + Number(a.outstanding || 0), 0);
+    .reduce((s, a) => s + Number(a.balance || 0), 0);
   const overdueCount = accounts.filter((a) => a.status === "overdue").length;
 
   return (
@@ -287,7 +287,7 @@ export default function CreditManagement() {
                         <div>
                           <p className="text-slate-500">Outstanding</p>
                           <p className="font-medium text-red-600">
-                            {fmt(a.outstanding)}
+                            {fmt(a.balance)}
                           </p>
                         </div>
                       </div>
