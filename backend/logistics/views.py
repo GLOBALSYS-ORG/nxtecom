@@ -18,6 +18,18 @@ class TransporterViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Transporter.objects.all()
 
+    def perform_update(self, serializer):
+        if self.request.user.role != "admin" and serializer.instance.user != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the transporter owner can modify this record.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user.role != "admin" and instance.user != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the transporter owner can delete this record.")
+        instance.delete()
+
 
 class ShipmentViewSet(viewsets.ModelViewSet):
     serializer_class = ShipmentSerializer

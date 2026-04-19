@@ -137,6 +137,18 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(issuer=self.request.user)
 
+    def perform_update(self, serializer):
+        if self.request.user.role != "admin" and serializer.instance.issuer != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the issuer can modify an invoice.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user.role != "admin" and instance.issuer != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the issuer can delete an invoice.")
+        instance.delete()
+
 
 class PaymentGatewayViewSet(viewsets.ModelViewSet):
     """
