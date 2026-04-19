@@ -47,4 +47,4 @@ class PurchaseOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOffer
         fields = "__all__"
-        read_only_fields = ["id", "total_amount", "created_at", "updated_at"]
+        read_only_fields = ["id", "buyer", "status", "total_amount", "created_at", "updated_at"]

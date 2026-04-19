@@ -73,7 +73,7 @@ class CreditLimitSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditLimit
         fields = "__all__"
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "creditor", "debtor", "created_at", "updated_at"]
 
 
 class BudgetSerializer(serializers.ModelSerializer):
