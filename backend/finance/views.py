@@ -85,6 +85,18 @@ class CreditLimitViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creditor=self.request.user)
 
+    def perform_update(self, serializer):
+        if self.request.user.role != "admin" and serializer.instance.creditor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the creditor can modify a credit limit.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user.role != "admin" and instance.creditor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the creditor can delete a credit limit.")
+        instance.delete()
+
 
 class BudgetViewSet(viewsets.ModelViewSet):
     serializer_class = BudgetSerializer
