@@ -8,8 +8,10 @@ import { Store } from "lucide-react";
 
 const ROLES = [
   { value: "customer", label: "Customer", desc: "Shop and buy products" },
+  { value: "farmer", label: "Farmer", desc: "Produce and sell farm goods" },
   { value: "retailer", label: "Retailer", desc: "Sell products to customers" },
   { value: "wholesaler", label: "Wholesaler", desc: "Supply retailers in bulk" },
+  { value: "depot", label: "Depot", desc: "Distribution center for companies" },
   { value: "company", label: "Company", desc: "Manufacture or supply products" },
   { value: "affiliate", label: "Affiliate", desc: "Earn commissions by referring" },
 ];
@@ -54,7 +56,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-8">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-2">
             <Store className="h-10 w-10 text-emerald-600" />
@@ -65,7 +67,7 @@ export default function Register() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md">{error}</div>
+              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md col-span-2">{error}</div>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -76,22 +78,30 @@ export default function Register() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Last Name</label>
                 <Input name="last_name" value={form.last_name} onChange={handleChange} required />
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
-              <Input name="username" value={form.username} onChange={handleChange} required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-              <Input name="email" type="email" value={form.email} onChange={handleChange} required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-              <Input name="phone" value={form.phone} onChange={handleChange} placeholder="+256..." />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                <Input name="username" value={form.username} onChange={handleChange} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <Input name="email" type="email" value={form.email} onChange={handleChange} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                <Input name="phone" value={form.phone} onChange={handleChange} placeholder="+256..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <Input name="password" type="password" value={form.password} onChange={handleChange} required minLength={8} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
+                <Input name="password_confirm" type="password" value={form.password_confirm} onChange={handleChange} required />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">I am a...</label>
-              <div className="grid grid-cols-1 gap-2 mt-1">
+              <div className="grid grid-cols-2 gap-2 mt-1">
                 {ROLES.map((role) => (
                   <label
                     key={role.value}
@@ -114,14 +124,6 @@ export default function Register() {
                   </label>
                 ))}
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-              <Input name="password" type="password" value={form.password} onChange={handleChange} required minLength={8} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
-              <Input name="password_confirm" type="password" value={form.password_confirm} onChange={handleChange} required />
             </div>
             <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}
