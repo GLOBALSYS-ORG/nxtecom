@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     User, CompanyProfile, DepotProfile,
-    WholesalerProfile, RetailerProfile, CustomerProfile,
+    WholesalerProfile, RetailerProfile, CustomerProfile, FarmerProfile,
 )
 
 
@@ -43,6 +43,13 @@ class RetailerProfileAdmin(admin.ModelAdmin):
     list_display = ("shop_name", "user", "city", "region", "subscription_plan", "is_online", "is_active")
     list_filter = ("subscription_plan", "is_online", "is_active", "region")
     search_fields = ("shop_name", "user__username")
+
+
+@admin.register(FarmerProfile)
+class FarmerProfileAdmin(admin.ModelAdmin):
+    list_display = ("farm_name", "user", "farm_size", "location", "city", "region", "has_livestock", "is_active")
+    list_filter = ("is_active", "has_livestock", "region")
+    search_fields = ("farm_name", "user__username", "location")
 
 
 @admin.register(CustomerProfile)

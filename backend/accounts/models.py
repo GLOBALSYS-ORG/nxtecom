@@ -6,6 +6,7 @@ from django.db import models
 class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "admin", "Admin"
+        FARMER = "farmer", "Farmer"
         COMPANY = "company", "Company"
         DEPOT = "depot", "Depot"
         WHOLESALER = "wholesaler", "Wholesaler"
@@ -105,6 +106,25 @@ class RetailerProfile(models.Model):
 
     def __str__(self):
         return self.shop_name
+
+
+class FarmerProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="farmer_profile")
+    farm_name = models.CharField(max_length=255)
+    farm_size = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Size in acres")
+    location = models.CharField(max_length=255, blank=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    region = models.CharField(max_length=100, blank=True)
+    contact_phone = models.CharField(max_length=20, blank=True)
+    primary_crops = models.JSONField(default=list, blank=True, help_text="List of primary crops grown")
+    has_livestock = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.farm_name
 
 
 class CustomerProfile(models.Model):

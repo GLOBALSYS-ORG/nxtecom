@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import (
     CompanyProfile, DepotProfile, WholesalerProfile,
-    RetailerProfile, CustomerProfile,
+    RetailerProfile, CustomerProfile, FarmerProfile,
 )
 
 User = get_user_model()
@@ -41,7 +41,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         role = validated_data.get("role", User.Role.CUSTOMER)
-        if role == User.Role.COMPANY:
+        if role == User.Role.FARMER:
+            FarmerProfile.objects.create(user=user, farm_name=f"{user.first_name}'s Farm")
+        elif role == User.Role.COMPANY:
             CompanyProfile.objects.create(user=user, name=f"{user.first_name}'s Company")
         elif role == User.Role.DEPOT:
             DepotProfile.objects.create(user=user, name=f"{user.first_name}'s Depot")
@@ -83,6 +85,14 @@ class RetailerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RetailerProfile
+        fields = "__all__"
+
+
+class FarmerProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = FarmerProfile
         fields = "__all__"
 
 

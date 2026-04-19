@@ -3,12 +3,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Sum
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway
+from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
 from .serializers import (
     TransactionSerializer, CreditAccountSerializer, CreditPaymentSerializer,
     PaymentGatewaySerializer, PaymentGatewayListSerializer,
+    CreditLimitSerializer, BudgetSerializer, ExpenseSerializer, InvoiceSerializer,
 )
 from accounts.permissions import IsSellerRole
+from django.db.models import Q
 
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -68,6 +70,72 @@ class CreditAccountViewSet(viewsets.ModelViewSet):
             credit.status = "paid"
         credit.save()
         return Response(CreditAccountSerializer(credit).data)
+
+
+class CreditLimitViewSet(viewsets.ModelViewSet):
+    serializer_class = CreditLimitSerializer
+    permission_classes = [IsSellerRole]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return CreditLimit.objects.all()
+        return CreditLimit.objects.filter(Q(creditor=user) | Q(debtor=user))
+
+    def perform_create(self, serializer):
+        serializer.save(creditor=self.request.user)
+
+    def perform_update(self, serializer):
+        if self.request.user.role != "admin" and serializer.instance.creditor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the creditor can modify a credit limit.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user.role != "admin" and instance.creditor != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the creditor can delete a credit limit.")
+        instance.delete()
+
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.role == "admin":
+            return Budget.objects.all()
+        return Budget.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.role == "admin":
+            return Expense.objects.all()
+        return Expense.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class InvoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = InvoiceSerializer
+    permission_classes = [IsSellerRole]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return Invoice.objects.all()
+        return Invoice.objects.filter(Q(issuer=user) | Q(recipient=user))
+
+    def perform_create(self, serializer):
+        serializer.save(issuer=self.request.user)
 
 
 class PaymentGatewayViewSet(viewsets.ModelViewSet):

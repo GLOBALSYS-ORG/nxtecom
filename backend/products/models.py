@@ -45,6 +45,7 @@ class Product(models.Model):
 
 class Inventory(models.Model):
     class OwnerType(models.TextChoices):
+        FARMER = "farmer", "Farmer"
         COMPANY = "company", "Company"
         DEPOT = "depot", "Depot"
         WHOLESALER = "wholesaler", "Wholesaler"

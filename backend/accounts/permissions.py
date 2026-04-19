@@ -41,9 +41,19 @@ class IsCompanyOrAdmin(BasePermission):
         return request.user.is_authenticated and request.user.role in ("company", "admin")
 
 
+class IsFarmer(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in ("farmer", "admin")
+
+
+class IsFarmerOrCompany(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in ("farmer", "company", "admin")
+
+
 class IsSellerRole(BasePermission):
-    """Company, Depot, Wholesaler, or Retailer"""
+    """Farmer, Company, Depot, Wholesaler, or Retailer"""
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role in (
-            "company", "depot", "wholesaler", "retailer", "admin"
+            "farmer", "company", "depot", "wholesaler", "retailer", "admin"
         )
