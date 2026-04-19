@@ -66,8 +66,7 @@ class Shipment(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.shipment_number:
-            import time
-            self.shipment_number = f"SHP-{int(time.time())}"
+            self.shipment_number = f"SHP-{uuid.uuid4().hex[:12].upper()}"
         super().save(*args, **kwargs)
 
 

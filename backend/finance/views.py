@@ -82,6 +82,9 @@ class CreditLimitViewSet(viewsets.ModelViewSet):
             return CreditLimit.objects.all()
         return CreditLimit.objects.filter(Q(creditor=user) | Q(debtor=user))
 
+    def perform_create(self, serializer):
+        serializer.save(creditor=self.request.user)
+
 
 class BudgetViewSet(viewsets.ModelViewSet):
     serializer_class = BudgetSerializer
