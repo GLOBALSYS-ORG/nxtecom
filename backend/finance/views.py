@@ -3,11 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Sum
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
+from .models import (
+    Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit,
+    Budget, Expense, Invoice, FarmerPayment, BatchCostTracking, ProfitMarginReport,
+)
 from .serializers import (
     TransactionSerializer, CreditAccountSerializer, CreditPaymentSerializer,
     PaymentGatewaySerializer, PaymentGatewayListSerializer,
     CreditLimitSerializer, BudgetSerializer, ExpenseSerializer, InvoiceSerializer,
+    FarmerPaymentSerializer, BatchCostTrackingSerializer, ProfitMarginReportSerializer,
 )
 from accounts.permissions import IsSellerRole
 from django.db.models import Q
@@ -181,3 +185,47 @@ class PaymentGatewayViewSet(viewsets.ModelViewSet):
             {"value": choice[0], "label": choice[1]}
             for choice in PaymentGateway.Provider.choices
         ])
+
+
+class FarmerPaymentViewSet(viewsets.ModelViewSet):
+    serializer_class = FarmerPaymentSerializer
+    permission_classes = [IsSellerRole]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return FarmerPayment.objects.all()
+        if user.role == "farmer":
+            return FarmerPayment.objects.filter(farmer=user)
+        return FarmerPayment.objects.filter(payer=user)
+
+    def perform_create(self, serializer):
+        serializer.save(payer=self.request.user)
+
+
+class BatchCostTrackingViewSet(viewsets.ModelViewSet):
+    serializer_class = BatchCostTrackingSerializer
+    permission_classes = [IsSellerRole]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return BatchCostTracking.objects.all()
+        return BatchCostTracking.objects.filter(incurred_by=user)
+
+    def perform_create(self, serializer):
+        serializer.save(incurred_by=self.request.user)
+
+
+class ProfitMarginReportViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfitMarginReportSerializer
+    permission_classes = [IsSellerRole]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return ProfitMarginReport.objects.all()
+        return ProfitMarginReport.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

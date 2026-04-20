@@ -1,8 +1,11 @@
-from rest_framework import permissions, status
+from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import AffiliateAccount, Referral, AffiliateWithdrawal
-from .serializers import AffiliateAccountSerializer, ReferralSerializer, AffiliateWithdrawalSerializer
+from .models import AffiliateAccount, Referral, AffiliateWithdrawal, AffiliateProduct, AffiliatePerformance
+from .serializers import (
+    AffiliateAccountSerializer, ReferralSerializer, AffiliateWithdrawalSerializer,
+    AffiliateProductSerializer, AffiliatePerformanceSerializer,
+)
 from accounts.permissions import IsAffiliate
 
 
@@ -67,3 +70,41 @@ class AffiliateWithdrawView(APIView):
         account.pending_earnings -= amount
         account.save()
         return Response(AffiliateWithdrawalSerializer(withdrawal).data, status=status.HTTP_201_CREATED)
+
+
+class AffiliateProductViewSet(viewsets.ModelViewSet):
+    serializer_class = AffiliateProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return AffiliateProduct.objects.all()
+        try:
+            account = AffiliateAccount.objects.get(user=user)
+            return AffiliateProduct.objects.filter(affiliate=account)
+        except AffiliateAccount.DoesNotExist:
+            return AffiliateProduct.objects.none()
+
+    def perform_create(self, serializer):
+        try:
+            account = AffiliateAccount.objects.get(user=self.request.user)
+        except AffiliateAccount.DoesNotExist:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("No affiliate account found for this user.")
+        serializer.save(affiliate=account)
+
+
+class AffiliatePerformanceViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = AffiliatePerformanceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return AffiliatePerformance.objects.all()
+        try:
+            account = AffiliateAccount.objects.get(user=user)
+            return AffiliatePerformance.objects.filter(affiliate=account)
+        except AffiliateAccount.DoesNotExist:
+            return AffiliatePerformance.objects.none()

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Transporter, Shipment, ShipmentItem, ShipmentTracking
+from .models import Transporter, Shipment, ShipmentItem, ShipmentTracking, Warehouse, WarehouseStock, DeliverySchedule
 
 
 @admin.register(Transporter)
@@ -26,3 +26,22 @@ class ShipmentItemAdmin(admin.ModelAdmin):
 class ShipmentTrackingAdmin(admin.ModelAdmin):
     list_display = ["shipment", "status", "location", "conditions", "timestamp"]
     list_filter = ["status"]
+
+
+@admin.register(Warehouse)
+class WarehouseAdmin(admin.ModelAdmin):
+    list_display = ["name", "owner", "location", "region", "storage_type", "capacity_kg", "current_stock_kg", "is_active"]
+    list_filter = ["storage_type", "is_active"]
+    search_fields = ["name", "owner__username", "location"]
+
+
+@admin.register(WarehouseStock)
+class WarehouseStockAdmin(admin.ModelAdmin):
+    list_display = ["warehouse", "product", "batch", "quantity_kg", "quantity_units", "received_at"]
+    search_fields = ["warehouse__name"]
+
+
+@admin.register(DeliverySchedule)
+class DeliveryScheduleAdmin(admin.ModelAdmin):
+    list_display = ["shipment", "pickup_time", "delivery_time", "priority", "route"]
+    list_filter = ["priority"]

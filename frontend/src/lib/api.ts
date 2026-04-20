@@ -141,6 +141,67 @@ export const budgetAPI = {
   invoices: () => api.get("/finance/invoices/"),
 };
 
+// Aggregation
+export const aggregationAPI = {
+  centers: () => api.get("/aggregation/centers/"),
+  createCenter: (data: Record<string, unknown>) => api.post("/aggregation/centers/", data),
+  batches: () => api.get("/aggregation/batches/"),
+  createBatch: (data: Record<string, unknown>) => api.post("/aggregation/batches/", data),
+  intakes: () => api.get("/aggregation/intakes/"),
+  createIntake: (data: Record<string, unknown>) => api.post("/aggregation/intakes/", data),
+  qualityAssessments: () => api.get("/aggregation/quality-assessments/"),
+};
+
+// Processing
+export const processingAPI = {
+  facilities: () => api.get("/processing/facilities/"),
+  createFacility: (data: Record<string, unknown>) => api.post("/processing/facilities/", data),
+  jobs: () => api.get("/processing/jobs/"),
+  createJob: (data: Record<string, unknown>) => api.post("/processing/jobs/", data),
+  costs: () => api.get("/processing/costs/"),
+  yields: () => api.get("/processing/yields/"),
+};
+
+// Intelligence
+export const intelligenceAPI = {
+  demandForecasts: () => api.get("/intelligence/demand-forecasts/"),
+  supplyDemand: () => api.get("/intelligence/supply-demand/"),
+  pricingRules: () => api.get("/intelligence/pricing-rules/"),
+  createPricingRule: (data: Record<string, unknown>) => api.post("/intelligence/pricing-rules/", data),
+  analytics: () => api.get("/intelligence/analytics/"),
+};
+
+// Supply Contracts
+export const contractsAPI = {
+  list: () => api.get("/production/supply-contracts/"),
+  create: (data: Record<string, unknown>) => api.post("/production/supply-contracts/", data),
+  get: (id: string) => api.get(`/production/supply-contracts/${id}/`),
+  harvestForecasts: () => api.get("/production/harvest-forecasts/"),
+};
+
+// Warehouses
+export const warehouseAPI = {
+  list: () => api.get("/logistics/warehouses/"),
+  create: (data: Record<string, unknown>) => api.post("/logistics/warehouses/", data),
+  stock: () => api.get("/logistics/warehouse-stock/"),
+  deliverySchedules: () => api.get("/logistics/delivery-schedules/"),
+};
+
+// Farmer Payments
+export const farmerPaymentAPI = {
+  list: () => api.get("/finance/farmer-payments/"),
+  create: (data: Record<string, unknown>) => api.post("/finance/farmer-payments/", data),
+  batchCosts: () => api.get("/finance/batch-costs/"),
+  profitMargins: () => api.get("/finance/profit-margins/"),
+};
+
+// Affiliate Products & Performance
+export const affiliateExtAPI = {
+  products: () => api.get("/affiliate/products/"),
+  createProduct: (data: Record<string, unknown>) => api.post("/affiliate/products/", data),
+  performance: () => api.get("/affiliate/performance/"),
+};
+
 // Payment Gateways
 export const paymentGatewayAPI = {
   list: () => api.get("/finance/payment-gateways/"),

@@ -142,3 +142,67 @@ class PurchaseOffer(models.Model):
     def save(self, *args, **kwargs):
         self.total_amount = self.quantity_kg * self.price_per_kg
         super().save(*args, **kwargs)
+
+
+class SupplyContract(models.Model):
+    """Contract-based supply commitments between farmers and buyers."""
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        ACTIVE = "active", "Active"
+        FULFILLED = "fulfilled", "Fulfilled"
+        CANCELLED = "cancelled", "Cancelled"
+        EXPIRED = "expired", "Expired"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    contract_number = models.CharField(max_length=30, unique=True)
+    farmer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="supply_contracts_as_farmer")
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="supply_contracts_as_buyer")
+    crop = models.ForeignKey(Crop, on_delete=models.SET_NULL, null=True, related_name="supply_contracts")
+    committed_quantity_kg = models.DecimalField(max_digits=12, decimal_places=2)
+    delivered_quantity_kg = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    price_per_kg = models.DecimalField(max_digits=12, decimal_places=2)
+    total_value = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    delivery_schedule = models.JSONField(default=list, blank=True, help_text="List of delivery milestones")
+    start_date = models.DateField()
+    end_date = models.DateField()
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
+    terms = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Contract {self.contract_number}"
+
+    def save(self, *args, **kwargs):
+        if not self.contract_number:
+            self.contract_number = f"SC-{uuid.uuid4().hex[:12].upper()}"
+        self.total_value = self.committed_quantity_kg * self.price_per_kg
+        super().save(*args, **kwargs)
+
+    @property
+    def fulfillment_pct(self):
+        if self.committed_quantity_kg and self.committed_quantity_kg > 0:
+            return round((self.delivered_quantity_kg / self.committed_quantity_kg) * 100, 2)
+        return 0
+
+
+class HarvestForecast(models.Model):
+    """Forecast of expected harvest yield from a planting record."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    planting_record = models.ForeignKey(PlantingRecord, on_delete=models.CASCADE, related_name="forecasts")
+    farmer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="harvest_forecasts")
+    estimated_yield_kg = models.DecimalField(max_digits=12, decimal_places=2)
+    confidence = models.DecimalField(max_digits=5, decimal_places=2, default=0, help_text="Confidence 0-100")
+    forecast_date = models.DateField()
+    methodology = models.CharField(max_length=100, blank=True, help_text="How the forecast was generated")
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-forecast_date"]
+
+    def __str__(self):
+        return f"Forecast: {self.estimated_yield_kg}kg for {self.planting_record}"

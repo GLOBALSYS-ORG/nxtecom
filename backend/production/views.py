@@ -2,10 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from accounts.permissions import IsFarmer, IsFarmerOrCompany, IsSellerRole
-from .models import Crop, PlantingRecord, HarvestRecord, LivestockRecord, PurchaseOffer
+from .models import Crop, PlantingRecord, HarvestRecord, LivestockRecord, PurchaseOffer, SupplyContract, HarvestForecast
 from .serializers import (
     CropSerializer, PlantingRecordSerializer, HarvestRecordSerializer,
     LivestockRecordSerializer, PurchaseOfferSerializer,
+    SupplyContractSerializer, HarvestForecastSerializer,
 )
 
 
@@ -92,3 +93,32 @@ class PurchaseOfferViewSet(viewsets.ModelViewSet):
         offer.status = PurchaseOffer.Status.REJECTED
         offer.save()
         return Response(PurchaseOfferSerializer(offer).data)
+
+
+class SupplyContractViewSet(viewsets.ModelViewSet):
+    serializer_class = SupplyContractSerializer
+    permission_classes = [IsFarmerOrCompany]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return SupplyContract.objects.all()
+        if user.role == "farmer":
+            return SupplyContract.objects.filter(farmer=user)
+        return SupplyContract.objects.filter(buyer=user)
+
+    def perform_create(self, serializer):
+        serializer.save(buyer=self.request.user)
+
+
+class HarvestForecastViewSet(viewsets.ModelViewSet):
+    serializer_class = HarvestForecastSerializer
+    permission_classes = [IsFarmer]
+
+    def get_queryset(self):
+        if self.request.user.role == "admin":
+            return HarvestForecast.objects.all()
+        return HarvestForecast.objects.filter(farmer=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(farmer=self.request.user)

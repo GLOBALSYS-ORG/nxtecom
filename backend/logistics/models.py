@@ -83,6 +83,81 @@ class ShipmentItem(models.Model):
         return f"{self.description} x{self.quantity}"
 
 
+class Warehouse(models.Model):
+    """Warehouse/storage facilities for inventory management."""
+    class StorageType(models.TextChoices):
+        DRY = "dry", "Dry Storage"
+        COLD = "cold", "Cold Storage"
+        FROZEN = "frozen", "Frozen Storage"
+        GENERAL = "general", "General"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="warehouses")
+    location = models.CharField(max_length=255)
+    address = models.TextField(blank=True)
+    region = models.CharField(max_length=100, blank=True)
+    storage_type = models.CharField(max_length=20, choices=StorageType.choices, default=StorageType.GENERAL)
+    capacity_kg = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    current_stock_kg = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.get_storage_type_display()})"
+
+    @property
+    def utilization_pct(self):
+        if self.capacity_kg and self.capacity_kg > 0:
+            return round((self.current_stock_kg / self.capacity_kg) * 100, 2)
+        return 0
+
+
+class WarehouseStock(models.Model):
+    """Track stock items in a warehouse."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="stock_items")
+    product = models.ForeignKey("products.Product", on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_stocks")
+    batch = models.ForeignKey("aggregation.Batch", on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_stocks")
+    quantity_kg = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    quantity_units = models.PositiveIntegerField(default=0)
+    location_in_warehouse = models.CharField(max_length=100, blank=True, help_text="Aisle/shelf/bin")
+    received_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-received_at"]
+
+    def __str__(self):
+        item = self.product.name if self.product else f"Batch {self.batch}"
+        return f"{item} in {self.warehouse.name}"
+
+
+class DeliverySchedule(models.Model):
+    """Scheduled deliveries linked to shipments."""
+    class Priority(models.TextChoices):
+        LOW = "low", "Low"
+        NORMAL = "normal", "Normal"
+        HIGH = "high", "High"
+        URGENT = "urgent", "Urgent"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="schedules")
+    pickup_time = models.DateTimeField()
+    delivery_time = models.DateTimeField()
+    route = models.TextField(blank=True, help_text="Route description or waypoints")
+    priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.NORMAL)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-pickup_time"]
+
+    def __str__(self):
+        return f"Schedule for {self.shipment.shipment_number}"
+
+
 class ShipmentTracking(models.Model):
     """GPS/status updates for shipments."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

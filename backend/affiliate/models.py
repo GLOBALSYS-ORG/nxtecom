@@ -56,3 +56,46 @@ class AffiliateWithdrawal(models.Model):
 
     def __str__(self):
         return f"Withdrawal: {self.amount} by {self.affiliate.user.username}"
+
+
+class AffiliateProduct(models.Model):
+    """Products that affiliates can promote and sell."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    affiliate = models.ForeignKey(AffiliateAccount, on_delete=models.CASCADE, related_name="promoted_products")
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="affiliate_listings")
+    custom_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, help_text="Override price for this affiliate")
+    commission_rate = models.DecimalField(max_digits=5, decimal_places=2, default=20.0, help_text="Commission percentage")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["affiliate", "product"]
+
+    def __str__(self):
+        return f"{self.affiliate.user.username} promotes {self.product.name}"
+
+
+class AffiliatePerformance(models.Model):
+    """Track affiliate performance metrics over time."""
+    class Period(models.TextChoices):
+        DAILY = "daily", "Daily"
+        WEEKLY = "weekly", "Weekly"
+        MONTHLY = "monthly", "Monthly"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    affiliate = models.ForeignKey(AffiliateAccount, on_delete=models.CASCADE, related_name="performance_records")
+    period = models.CharField(max_length=20, choices=Period.choices, default=Period.MONTHLY)
+    period_start = models.DateField()
+    period_end = models.DateField()
+    orders_generated = models.PositiveIntegerField(default=0)
+    revenue_generated = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    commission_earned = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    conversion_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0, help_text="Percentage")
+    clicks = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-period_start"]
+
+    def __str__(self):
+        return f"Performance: {self.affiliate.user.username} ({self.period_start} to {self.period_end})"
