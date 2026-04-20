@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     "market",
     "production",
     "logistics",
+    "aggregation",
+    "processing",
+    "intelligence",
 ]
 
 MIDDLEWARE = [

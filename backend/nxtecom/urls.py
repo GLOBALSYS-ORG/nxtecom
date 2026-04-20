@@ -23,6 +23,9 @@ def api_root(request):
             "market": "/api/market/",
             "production": "/api/production/",
             "logistics": "/api/logistics/",
+            "aggregation": "/api/aggregation/",
+            "processing": "/api/processing/",
+            "intelligence": "/api/intelligence/",
         },
     })
 
@@ -40,6 +43,9 @@ urlpatterns = [
     path("api/market/", include("market.urls")),
     path("api/production/", include("production.urls")),
     path("api/logistics/", include("logistics.urls")),
+    path("api/aggregation/", include("aggregation.urls")),
+    path("api/processing/", include("processing.urls")),
+    path("api/intelligence/", include("intelligence.urls")),
 ]
 
 if settings.DEBUG:

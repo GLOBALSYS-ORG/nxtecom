@@ -8,7 +8,7 @@ import { isAuthenticated, getUser } from "../store/auth";
 import {
   Package, ShoppingCart, DollarSign, TrendingUp,
   BarChart3, AlertTriangle, CreditCard, FileText, Warehouse,
-  Sprout, Truck, Wallet,
+  Sprout, Truck, Wallet, Brain, Factory, Users, ClipboardCheck,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -256,6 +256,60 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* Agri Value Chain Quick Actions - Company/Depot/Admin */}
+            {(user?.role === "company" || user?.role === "depot" || user?.role === "admin") && (
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/aggregation")}
+                >
+                  <ClipboardCheck className="h-6 w-6 text-emerald-600" />
+                  <span className="text-xs">Aggregation</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/processing")}
+                >
+                  <Factory className="h-6 w-6 text-blue-600" />
+                  <span className="text-xs">Processing</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/warehouses")}
+                >
+                  <Warehouse className="h-6 w-6 text-purple-600" />
+                  <span className="text-xs">Warehouses</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/intelligence")}
+                >
+                  <Brain className="h-6 w-6 text-indigo-600" />
+                  <span className="text-xs">Intelligence</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/contracts")}
+                >
+                  <FileText className="h-6 w-6 text-amber-600" />
+                  <span className="text-xs">Contracts</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col items-center gap-2"
+                  onClick={() => navigate("/affiliates-dashboard")}
+                >
+                  <Users className="h-6 w-6 text-pink-600" />
+                  <span className="text-xs">Affiliate Sales</span>
+                </Button>
+              </div>
+            )}
+
             {/* Financial Statements - Retailer/Wholesaler/Company/Admin */}
             {(user?.role === "retailer" || user?.role === "wholesaler" || user?.role === "company" || user?.role === "admin") && (
               <Button
@@ -288,6 +342,10 @@ export default function Dashboard() {
                 <h4 className="font-medium text-blue-800 mb-2">Affiliate Dashboard</h4>
                 <p className="text-sm text-blue-700">
                   Track your referrals, earnings, and withdrawals. Earn 20% commission on subscription renewals.
+                  View your{" "}
+                  <button onClick={() => navigate("/affiliates-dashboard")} className="underline font-medium">
+                    affiliate products & performance
+                  </button>.
                 </p>
               </div>
             )}

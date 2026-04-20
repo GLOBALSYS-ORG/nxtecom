@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AffiliateAccount, Referral, AffiliateWithdrawal
+from .models import AffiliateAccount, Referral, AffiliateWithdrawal, AffiliateProduct, AffiliatePerformance
 
 
 @admin.register(AffiliateAccount)
@@ -20,4 +20,17 @@ class ReferralAdmin(admin.ModelAdmin):
 class AffiliateWithdrawalAdmin(admin.ModelAdmin):
     list_display = ("affiliate", "amount", "status", "processed_at", "created_at")
     list_filter = ("status",)
+    search_fields = ("affiliate__user__username",)
+
+
+@admin.register(AffiliateProduct)
+class AffiliateProductAdmin(admin.ModelAdmin):
+    list_display = ("affiliate", "product", "channel", "custom_price", "commission_rate", "is_active", "created_at")
+    list_filter = ("channel", "is_active")
+    search_fields = ("affiliate__user__username", "product__name")
+
+
+@admin.register(AffiliatePerformance)
+class AffiliatePerformanceAdmin(admin.ModelAdmin):
+    list_display = ("affiliate", "period", "total_referrals", "successful_conversions", "total_revenue", "total_commission", "conversion_rate")
     search_fields = ("affiliate__user__username",)

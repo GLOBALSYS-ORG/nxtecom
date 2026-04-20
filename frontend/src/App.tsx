@@ -16,6 +16,12 @@ import Production from "./pages/Production";
 import CreditManagement from "./pages/CreditManagement";
 import Logistics from "./pages/Logistics";
 import BudgetExpenses from "./pages/BudgetExpenses";
+import Aggregation from "./pages/Aggregation";
+import ProcessingPage from "./pages/Processing";
+import Warehouses from "./pages/Warehouses";
+import Intelligence from "./pages/Intelligence";
+import AffiliatesDashboard from "./pages/AffiliatesDashboard";
+import Contracts from "./pages/Contracts";
 
 function App() {
   return (
@@ -39,6 +45,12 @@ function App() {
             <Route path="/credit-management" element={<CreditManagement />} />
             <Route path="/logistics" element={<Logistics />} />
             <Route path="/budget-expenses" element={<BudgetExpenses />} />
+            <Route path="/aggregation" element={<Aggregation />} />
+            <Route path="/processing" element={<ProcessingPage />} />
+            <Route path="/warehouses" element={<Warehouses />} />
+            <Route path="/intelligence" element={<Intelligence />} />
+            <Route path="/affiliates-dashboard" element={<AffiliatesDashboard />} />
+            <Route path="/contracts" element={<Contracts />} />
           </Routes>
         </main>
         <Footer />

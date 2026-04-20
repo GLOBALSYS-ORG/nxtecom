@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
+from .models import (
+    Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit,
+    Budget, Expense, Invoice, FarmerPayment, BatchCostTracking, ProfitMarginReport,
+)
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -103,3 +106,34 @@ class InvoiceSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = "__all__"
         read_only_fields = ["id", "invoice_number", "total", "created_at", "updated_at"]
+
+
+class FarmerPaymentSerializer(serializers.ModelSerializer):
+    farmer_name = serializers.CharField(source="farmer.username", read_only=True)
+    payer_name = serializers.CharField(source="payer.username", read_only=True)
+    payment_method_display = serializers.CharField(source="get_payment_method_display", read_only=True)
+
+    class Meta:
+        model = FarmerPayment
+        fields = "__all__"
+        read_only_fields = ["id", "payer", "paid_at", "created_at"]
+
+
+class BatchCostTrackingSerializer(serializers.ModelSerializer):
+    batch_number = serializers.CharField(source="batch.batch_number", read_only=True)
+    cost_type_display = serializers.CharField(source="get_cost_type_display", read_only=True)
+    incurred_by_name = serializers.CharField(source="incurred_by.username", read_only=True)
+
+    class Meta:
+        model = BatchCostTracking
+        fields = "__all__"
+        read_only_fields = ["id", "incurred_by", "created_at"]
+
+
+class ProfitMarginReportSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source="product.name", read_only=True)
+
+    class Meta:
+        model = ProfitMarginReport
+        fields = "__all__"
+        read_only_fields = ["id", "user", "gross_profit", "net_profit", "margin_pct", "created_at"]

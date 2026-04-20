@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { isAuthenticated, getUser } from "../store/auth";
-import { Sprout, Bug, Warehouse, DollarSign, TrendingUp, Leaf, FileText, Package } from "lucide-react";
+import { Sprout, Bug, Warehouse, DollarSign, TrendingUp, Leaf, FileText, Package, ClipboardCheck } from "lucide-react";
 
 interface PlantingRecord { id: string; crop_name: string; field_name: string; area_acres: string; planting_date: string; expected_harvest_date: string; status: string; }
 interface LivestockRecord { id: string; animal_type: string; animal_type_display: string; breed: string; count: number; health_status: string; location: string; }
@@ -153,6 +153,7 @@ export default function FarmerDashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: "Production", icon: Sprout, path: "/production", color: "text-green-600" },
+              { label: "Contracts", icon: ClipboardCheck, path: "/contracts", color: "text-amber-600" },
               { label: "Inventory", icon: Warehouse, path: "/inventory", color: "text-blue-600" },
               { label: "Finances", icon: FileText, path: "/financial-statements", color: "text-indigo-600" },
               { label: "Market Prices", icon: TrendingUp, path: "/products", color: "text-purple-600" },

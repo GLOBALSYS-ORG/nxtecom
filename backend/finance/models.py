@@ -236,3 +236,93 @@ class Invoice(models.Model):
             self.invoice_number = f"INV-{int(time.time())}"
         self.total = self.subtotal + self.tax_amount
         super().save(*args, **kwargs)
+
+
+class FarmerPayment(models.Model):
+    """Payments made to farmers for goods received."""
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        PROCESSED = "processed", "Processed"
+        FAILED = "failed", "Failed"
+
+    class PaymentMethod(models.TextChoices):
+        MOBILE_MONEY = "mobile_money", "Mobile Money"
+        BANK_TRANSFER = "bank_transfer", "Bank Transfer"
+        CASH = "cash", "Cash"
+        CHECK = "check", "Check"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    farmer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="farmer_payments")
+    payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payments_to_farmers")
+    intake_record = models.ForeignKey("aggregation.IntakeRecord", on_delete=models.SET_NULL, null=True, blank=True, related_name="payments")
+    contract = models.ForeignKey("production.SupplyContract", on_delete=models.SET_NULL, null=True, blank=True, related_name="payments")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices, default=PaymentMethod.MOBILE_MONEY)
+    reference = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    paid_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Payment: {self.amount} to {self.farmer.username}"
+
+
+class BatchCostTracking(models.Model):
+    """Track costs associated with a batch through the value chain."""
+    class CostType(models.TextChoices):
+        PROCUREMENT = "procurement", "Procurement (farmer payment)"
+        AGGREGATION = "aggregation", "Aggregation"
+        PROCESSING = "processing", "Processing"
+        TRANSPORT = "transport", "Transportation"
+        STORAGE = "storage", "Storage"
+        PACKAGING = "packaging", "Packaging"
+        OTHER = "other", "Other"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    batch = models.ForeignKey("aggregation.Batch", on_delete=models.CASCADE, related_name="cost_tracking")
+    cost_type = models.CharField(max_length=20, choices=CostType.choices)
+    description = models.CharField(max_length=500)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    incurred_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="batch_costs")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.get_cost_type_display()}: {self.amount} for {self.batch}"
+
+
+class ProfitMarginReport(models.Model):
+    """Profit margin analysis per product and period."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profit_margin_reports")
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="profit_margins")
+    period_start = models.DateField()
+    period_end = models.DateField()
+    revenue = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    cost_of_goods = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    gross_profit = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    operating_expenses = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    net_profit = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    margin_pct = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    units_sold = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-period_start"]
+
+    def __str__(self):
+        return f"Margin: {self.product.name} ({self.margin_pct}%)"
+
+    def save(self, *args, **kwargs):
+        self.gross_profit = self.revenue - self.cost_of_goods
+        self.net_profit = self.gross_profit - self.operating_expenses
+        if self.revenue and self.revenue > 0:
+            self.margin_pct = round((self.net_profit / self.revenue) * 100, 2)
+        super().save(*args, **kwargs)

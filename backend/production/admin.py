@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Crop, PlantingRecord, HarvestRecord, LivestockRecord, PurchaseOffer
+from .models import Crop, PlantingRecord, HarvestRecord, LivestockRecord, PurchaseOffer, SupplyContract, HarvestForecast
 
 
 @admin.register(Crop)
@@ -34,3 +34,16 @@ class PurchaseOfferAdmin(admin.ModelAdmin):
     list_display = ["product_description", "buyer", "farmer", "quantity_kg", "price_per_kg", "total_amount", "status"]
     list_filter = ["status"]
     search_fields = ["product_description", "buyer__username", "farmer__username"]
+
+
+@admin.register(SupplyContract)
+class SupplyContractAdmin(admin.ModelAdmin):
+    list_display = ["contract_number", "farmer", "buyer", "crop", "quantity_kg", "price_per_kg", "total_value", "status"]
+    list_filter = ["status"]
+    search_fields = ["contract_number", "farmer__username", "buyer__username"]
+
+
+@admin.register(HarvestForecast)
+class HarvestForecastAdmin(admin.ModelAdmin):
+    list_display = ["farmer", "crop", "planting_record", "expected_yield_kg", "forecast_date", "confidence_pct"]
+    search_fields = ["farmer__username", "crop__name"]

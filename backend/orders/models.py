@@ -39,6 +39,15 @@ class Order(models.Model):
     seller_type = models.CharField(max_length=20)
     seller_id = models.UUIDField()
     order_type = models.CharField(max_length=20, choices=OrderType.choices, default=OrderType.B2C)
+    channel = models.CharField(max_length=20, choices=[
+        ("wholesale", "Wholesale"),
+        ("retail", "Retail"),
+        ("direct", "Direct to Consumer"),
+        ("institutional", "Institutional"),
+        ("affiliate", "Affiliate"),
+    ], default="retail")
+    affiliate = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="affiliate_orders", help_text="Affiliate who generated this order")
+    batch = models.ForeignKey("aggregation.Batch", on_delete=models.SET_NULL, null=True, blank=True, related_name="orders", help_text="Batch for traceability")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     approval_status = models.CharField(max_length=20, choices=ApprovalStatus.choices, default=ApprovalStatus.NOT_REQUIRED)
     approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders_approved")

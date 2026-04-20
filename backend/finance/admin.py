@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit, Budget, Expense, Invoice
+from .models import (
+    Transaction, CreditAccount, CreditPayment, PaymentGateway, CreditLimit,
+    Budget, Expense, Invoice, FarmerPayment, BatchCostTracking, ProfitMarginReport,
+)
 
 
 @admin.register(Transaction)
@@ -64,3 +67,24 @@ class InvoiceAdmin(admin.ModelAdmin):
     list_display = ("invoice_number", "issuer", "recipient", "subtotal", "tax_amount", "total", "status", "due_date")
     list_filter = ("status",)
     search_fields = ("invoice_number", "issuer__username", "recipient__username")
+
+
+@admin.register(FarmerPayment)
+class FarmerPaymentAdmin(admin.ModelAdmin):
+    list_display = ("farmer", "payer", "amount", "payment_method", "status", "paid_at", "created_at")
+    list_filter = ("status", "payment_method")
+    search_fields = ("farmer__username", "payer__username", "reference")
+
+
+@admin.register(BatchCostTracking)
+class BatchCostTrackingAdmin(admin.ModelAdmin):
+    list_display = ("batch", "cost_type", "description", "amount", "incurred_by", "created_at")
+    list_filter = ("cost_type",)
+    search_fields = ("description", "batch__batch_number")
+
+
+@admin.register(ProfitMarginReport)
+class ProfitMarginReportAdmin(admin.ModelAdmin):
+    list_display = ("user", "product", "period_start", "period_end", "revenue", "net_profit", "margin_pct")
+    list_filter = ("period_start",)
+    search_fields = ("user__username", "product__name")

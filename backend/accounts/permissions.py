@@ -57,3 +57,19 @@ class IsSellerRole(BasePermission):
         return request.user.is_authenticated and request.user.role in (
             "farmer", "company", "depot", "wholesaler", "retailer", "admin"
         )
+
+
+class IsAggregatorRole(BasePermission):
+    """Company, Depot, or Admin — roles that manage aggregation centers."""
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in (
+            "company", "depot", "admin"
+        )
+
+
+class IsProcessorRole(BasePermission):
+    """Company or Admin — roles that manage processing facilities."""
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in (
+            "company", "admin"
+        )
