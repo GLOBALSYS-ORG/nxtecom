@@ -38,12 +38,12 @@ class PurchaseOfferAdmin(admin.ModelAdmin):
 
 @admin.register(SupplyContract)
 class SupplyContractAdmin(admin.ModelAdmin):
-    list_display = ["contract_number", "farmer", "buyer", "crop", "quantity_kg", "price_per_kg", "total_value", "status"]
+    list_display = ["contract_number", "farmer", "buyer", "crop", "committed_quantity_kg", "price_per_kg", "total_value", "status"]
     list_filter = ["status"]
     search_fields = ["contract_number", "farmer__username", "buyer__username"]
 
 
 @admin.register(HarvestForecast)
 class HarvestForecastAdmin(admin.ModelAdmin):
-    list_display = ["farmer", "crop", "planting_record", "expected_yield_kg", "forecast_date", "confidence_pct"]
-    search_fields = ["farmer__username", "crop__name"]
+    list_display = ["farmer", "planting_record", "estimated_yield_kg", "forecast_date", "confidence"]
+    search_fields = ["farmer__username"]

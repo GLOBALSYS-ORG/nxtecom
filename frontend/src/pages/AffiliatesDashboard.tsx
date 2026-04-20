@@ -13,7 +13,6 @@ interface AffiliateProduct {
   affiliate_name: string;
   custom_price: string;
   commission_rate: string;
-  channel: string;
   is_active: boolean;
   created_at: string;
 }
@@ -21,10 +20,9 @@ interface Performance {
   id: string;
   affiliate_name: string;
   period: string;
-  total_referrals: number;
-  successful_conversions: number;
-  total_revenue: string;
-  total_commission: string;
+  orders_generated: number;
+  revenue_generated: string;
+  commission_earned: string;
   conversion_rate: string;
   created_at: string;
 }
@@ -58,9 +56,9 @@ export default function AffiliatesDashboard() {
     } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  const totalRevenue = performance.reduce((s, p) => s + Number(p.total_revenue || 0), 0);
-  const totalCommission = performance.reduce((s, p) => s + Number(p.total_commission || 0), 0);
-  const totalConversions = performance.reduce((s, p) => s + (p.successful_conversions || 0), 0);
+  const totalRevenue = performance.reduce((s, p) => s + Number(p.revenue_generated || 0), 0);
+  const totalCommission = performance.reduce((s, p) => s + Number(p.commission_earned || 0), 0);
+  const totalConversions = performance.reduce((s, p) => s + (p.orders_generated || 0), 0);
 
   if (loading) return (
     <div className="max-w-6xl mx-auto px-4 py-12 text-center">
@@ -129,7 +127,6 @@ export default function AffiliatesDashboard() {
                   <div>
                     <p className="font-medium">{p.product_name}</p>
                     <p className="text-sm text-slate-600">Affiliate: {p.affiliate_name}</p>
-                    <p className="text-sm text-slate-500">Channel: <span className="capitalize">{p.channel.replace(/_/g, " ")}</span></p>
                     {p.custom_price && <p className="text-sm text-slate-500">Custom Price: UGX {Number(p.custom_price).toLocaleString()}</p>}
                     <p className="text-sm text-green-700">Commission: {p.commission_rate}%</p>
                   </div>
@@ -155,13 +152,12 @@ export default function AffiliatesDashboard() {
                     <p className="font-medium">{p.affiliate_name}</p>
                     <p className="text-sm text-slate-600">Period: {p.period}</p>
                     <div className="flex gap-4 mt-1">
-                      <span className="text-sm text-slate-500">Referrals: {p.total_referrals}</span>
-                      <span className="text-sm text-green-700">Conversions: {p.successful_conversions}</span>
+                      <span className="text-sm text-slate-500">Orders: {p.orders_generated}</span>
                       <span className="text-sm text-blue-700">Rate: {p.conversion_rate}%</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-semibold text-green-700">UGX {Number(p.total_commission).toLocaleString()}</p>
+                    <p className="text-lg font-semibold text-green-700">UGX {Number(p.commission_earned).toLocaleString()}</p>
                     <p className="text-xs text-slate-500">Commission earned</p>
                   </div>
                 </div>

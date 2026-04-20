@@ -51,6 +51,9 @@ class IntakeRecordViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
+            # Allow depot/aggregator users to view intake records too
+            if hasattr(self.request, 'user') and self.request.user.is_authenticated and self.request.user.role in ("depot", "admin"):
+                return [IsAggregatorRole()]
             return [IsFarmerOrCompany()]
         return [IsAggregatorRole()]
 

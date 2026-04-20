@@ -13,10 +13,10 @@ interface Contract {
   farmer_name: string;
   buyer_name: string;
   crop_name: string;
-  quantity_kg: string;
+  committed_quantity_kg: string;
+  delivered_quantity_kg: string;
   price_per_kg: string;
   total_value: string;
-  delivered_kg: string;
   fulfillment_pct: string;
   status: string;
   start_date: string;
@@ -27,9 +27,9 @@ interface Forecast {
   id: string;
   crop_name: string;
   planting_info: string;
-  expected_yield_kg: string;
+  estimated_yield_kg: string;
   forecast_date: string;
-  confidence_pct: string;
+  confidence: string;
   notes: string;
 }
 
@@ -139,14 +139,14 @@ export default function Contracts() {
                   <div>
                     <p className="font-medium font-mono">{c.contract_number}</p>
                     <p className="text-sm text-slate-600">Farmer: {c.farmer_name} | Buyer: {c.buyer_name}</p>
-                    <p className="text-sm text-slate-500">Crop: {c.crop_name} | {Number(c.quantity_kg).toLocaleString()} kg @ UGX {Number(c.price_per_kg).toLocaleString()}/kg</p>
+                    <p className="text-sm text-slate-500">Crop: {c.crop_name} | {Number(c.committed_quantity_kg).toLocaleString()} kg @ UGX {Number(c.price_per_kg).toLocaleString()}/kg</p>
                     <p className="text-sm text-slate-500">
                       Period: {new Date(c.start_date).toLocaleDateString()} - {new Date(c.end_date).toLocaleDateString()}
                       {c.delivery_frequency && <span> | Frequency: <span className="capitalize">{c.delivery_frequency}</span></span>}
                     </p>
                     <div className="mt-2">
                       <div className="flex justify-between text-xs text-slate-500 mb-1">
-                        <span>Delivered: {Number(c.delivered_kg).toLocaleString()} kg</span>
+                        <span>Delivered: {Number(c.delivered_quantity_kg).toLocaleString()} kg</span>
                         <span>{c.fulfillment_pct}%</span>
                       </div>
                       <div className="w-full bg-slate-200 rounded-full h-2">
@@ -180,8 +180,8 @@ export default function Contracts() {
                     {f.notes && <p className="text-sm text-slate-400 mt-1">{f.notes}</p>}
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-emerald-700">{Number(f.expected_yield_kg).toLocaleString()} kg</p>
-                    <p className="text-sm text-slate-500">Confidence: {f.confidence_pct}%</p>
+                    <p className="text-xl font-bold text-emerald-700">{Number(f.estimated_yield_kg).toLocaleString()} kg</p>
+                    <p className="text-sm text-slate-500">Confidence: {f.confidence}%</p>
                   </div>
                 </div>
               </CardContent>

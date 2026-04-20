@@ -87,7 +87,11 @@ class AffiliateProductViewSet(viewsets.ModelViewSet):
             return AffiliateProduct.objects.none()
 
     def perform_create(self, serializer):
-        account = AffiliateAccount.objects.get(user=self.request.user)
+        try:
+            account = AffiliateAccount.objects.get(user=self.request.user)
+        except AffiliateAccount.DoesNotExist:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("No affiliate account found for this user.")
         serializer.save(affiliate=account)
 
 

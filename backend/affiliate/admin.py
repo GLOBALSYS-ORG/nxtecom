@@ -25,12 +25,12 @@ class AffiliateWithdrawalAdmin(admin.ModelAdmin):
 
 @admin.register(AffiliateProduct)
 class AffiliateProductAdmin(admin.ModelAdmin):
-    list_display = ("affiliate", "product", "channel", "custom_price", "commission_rate", "is_active", "created_at")
-    list_filter = ("channel", "is_active")
+    list_display = ("affiliate", "product", "custom_price", "commission_rate", "is_active", "created_at")
+    list_filter = ("is_active",)
     search_fields = ("affiliate__user__username", "product__name")
 
 
 @admin.register(AffiliatePerformance)
 class AffiliatePerformanceAdmin(admin.ModelAdmin):
-    list_display = ("affiliate", "period", "total_referrals", "successful_conversions", "total_revenue", "total_commission", "conversion_rate")
+    list_display = ("affiliate", "period", "orders_generated", "revenue_generated", "commission_earned", "conversion_rate", "clicks")
     search_fields = ("affiliate__user__username",)
