@@ -325,4 +325,6 @@ class ProfitMarginReport(models.Model):
         self.net_profit = self.gross_profit - self.operating_expenses
         if self.revenue and self.revenue > 0:
             self.margin_pct = round((self.net_profit / self.revenue) * 100, 2)
+        else:
+            self.margin_pct = 0
         super().save(*args, **kwargs)
