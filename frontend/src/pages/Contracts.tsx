@@ -23,10 +23,14 @@ interface Contract {
   end_date: string;
   delivery_frequency: string;
 }
+interface PlantingInfo {
+  crop: string;
+  field: string;
+  area_acres: string;
+}
 interface Forecast {
   id: string;
-  crop_name: string;
-  planting_info: string;
+  planting_info: PlantingInfo | null;
   estimated_yield_kg: string;
   forecast_date: string;
   confidence: string;
@@ -174,8 +178,8 @@ export default function Contracts() {
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium">{f.crop_name}</p>
-                    {f.planting_info && <p className="text-sm text-slate-600">{f.planting_info}</p>}
+                    <p className="font-medium">{f.planting_info ? f.planting_info.crop : "Unknown Crop"}</p>
+                    {f.planting_info && <p className="text-sm text-slate-600">{f.planting_info.field} - {f.planting_info.area_acres} acres</p>}
                     <p className="text-sm text-slate-500">Forecast date: {new Date(f.forecast_date).toLocaleDateString()}</p>
                     {f.notes && <p className="text-sm text-slate-400 mt-1">{f.notes}</p>}
                   </div>

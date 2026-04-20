@@ -13,7 +13,7 @@ interface Forecast {
   region: string;
   period_start: string;
   period_end: string;
-  forecast_quantity_kg: string;
+  predicted_demand_kg: string;
   confidence: string;
   accuracy_score: string;
   methodology: string;
@@ -22,8 +22,8 @@ interface Match {
   id: string;
   product_name: string;
   region: string;
-  supply_quantity_kg: string;
-  demand_quantity_kg: string;
+  supply_available_kg: string;
+  demand_forecast_kg: string;
   gap_kg: string;
   recommended_action: string;
   computed_at: string;
@@ -33,16 +33,17 @@ interface PricingRule {
   product_name: string;
   category_name: string;
   rule_type: string;
-  min_price: string;
-  max_price: string;
-  modifier_pct: string;
+  name: string;
+  price_modifier: string;
   is_active: boolean;
 }
 interface Snapshot {
   id: string;
-  metric_type: string;
-  value: string;
-  period: string;
+  snapshot_type: string;
+  data: Record<string, unknown>;
+  insights: string[];
+  period_start: string;
+  period_end: string;
   created_at: string;
 }
 
@@ -154,7 +155,7 @@ export default function Intelligence() {
                     <p className="text-sm text-slate-500">Method: {f.methodology}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-emerald-700">{Number(f.forecast_quantity_kg).toLocaleString()} kg</p>
+                    <p className="text-xl font-bold text-emerald-700">{Number(f.predicted_demand_kg).toLocaleString()} kg</p>
                     <p className="text-sm text-slate-500">Confidence: {f.confidence}%</p>
                   </div>
                 </div>
@@ -176,8 +177,8 @@ export default function Intelligence() {
                     <p className="font-medium">{m.product_name}</p>
                     <p className="text-sm text-slate-600">Region: {m.region}</p>
                     <div className="flex gap-4 mt-1">
-                      <span className="text-sm text-green-700">Supply: {Number(m.supply_quantity_kg).toLocaleString()} kg</span>
-                      <span className="text-sm text-blue-700">Demand: {Number(m.demand_quantity_kg).toLocaleString()} kg</span>
+                      <span className="text-sm text-green-700">Supply: {Number(m.supply_available_kg).toLocaleString()} kg</span>
+                      <span className="text-sm text-blue-700">Demand: {Number(m.demand_forecast_kg).toLocaleString()} kg</span>
                     </div>
                     {m.recommended_action && <p className="text-sm font-medium text-purple-700 mt-1">{m.recommended_action}</p>}
                   </div>
@@ -203,12 +204,9 @@ export default function Intelligence() {
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium">{p.product_name || p.category_name || "General Rule"}</p>
+                    <p className="font-medium">{p.name || p.product_name || p.category_name || "General Rule"}</p>
                     <p className="text-sm text-slate-600 capitalize">Type: {p.rule_type.replace(/_/g, " ")}</p>
-                    <p className="text-sm text-slate-500">
-                      Range: UGX {Number(p.min_price).toLocaleString()} - UGX {Number(p.max_price).toLocaleString()}
-                    </p>
-                    <p className="text-sm text-slate-500">Modifier: {p.modifier_pct}%</p>
+                    <p className="text-sm text-slate-500">Modifier: {Number(p.price_modifier).toFixed(2)}x</p>
                   </div>
                   <Badge className={p.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
                     {p.is_active ? "Active" : "Inactive"}
@@ -229,10 +227,10 @@ export default function Intelligence() {
               <CardContent className="pt-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium capitalize">{a.metric_type.replace(/_/g, " ")}</p>
-                    <p className="text-sm text-slate-500">Period: {a.period} | {new Date(a.created_at).toLocaleDateString()}</p>
+                    <p className="font-medium capitalize">{a.snapshot_type.replace(/_/g, " ")}</p>
+                    <p className="text-sm text-slate-500">Period: {new Date(a.period_start).toLocaleDateString()} - {new Date(a.period_end).toLocaleDateString()}</p>
                   </div>
-                  <p className="text-xl font-bold text-emerald-700">{a.value}</p>
+                  <p className="text-sm text-slate-500">{new Date(a.created_at).toLocaleDateString()}</p>
                 </div>
               </CardContent>
             </Card>

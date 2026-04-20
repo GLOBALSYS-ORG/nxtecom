@@ -39,8 +39,8 @@ interface Cost {
 interface YieldRec {
   id: string;
   job_number: string;
-  input_quantity_kg: string;
-  output_quantity_kg: string;
+  input_kg: string;
+  output_kg: string;
   yield_percentage: string;
   waste_kg: string;
   recorded_at: string;
@@ -225,7 +225,7 @@ export default function ProcessingPage() {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-medium font-mono">{y.job_number}</p>
-                    <p className="text-sm text-slate-500">Input: {Number(y.input_quantity_kg).toLocaleString()} kg | Output: {Number(y.output_quantity_kg).toLocaleString()} kg</p>
+                    <p className="text-sm text-slate-500">Input: {Number(y.input_kg).toLocaleString()} kg | Output: {Number(y.output_kg).toLocaleString()} kg</p>
                     <p className="text-sm text-slate-500">Waste: {Number(y.waste_kg).toLocaleString()} kg</p>
                   </div>
                   <div className="text-right">
